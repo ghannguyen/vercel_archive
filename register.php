@@ -24,7 +24,7 @@
     </style>
 </head>
 <body>
-
+<!-- thay đổi -->
     <div class="login-container">
         <h2>Tham gia cùng chúng mình!</h2>
         <p class="subtitle">Tạo tài khoản để kết nối và chia sẻ ngay</p>
