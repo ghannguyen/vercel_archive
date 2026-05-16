@@ -1,3 +1,51 @@
+<?php
+// 1. Khởi báo hằng số URL gốc của dự án phục vụ việc liên kết tài nguyên tĩnh (CSS/JS)
+define("BASE_URL", "http://localhost/PTUDW-N07-Social-network/");
+
+// 2. Nhúng file config bằng đường dẫn tuyệt đối chuẩn xác để lấy Class Database và hằng số BASE_URL
+require_once "C:/xampp/htdocs/PTUDW-N07-Social-network/Config/Database.php";
+require_once "C:/xampp/htdocs/PTUDW-N07-Social-network/Controllers/AdminController.php";
+
+// 3. Khởi tạo đối tượng kết nối Cơ sở dữ liệu qua PDO
+$database = new Database();
+$dbConnection = $database->connect();
+
+// 4. BỘ ĐỊNH TUYẾN (ROUTER) BẰNG CÂU LỆNH ĐIỀU KIỆN
+// Hệ thống sẽ đọc tham số 'url' truyền vào từ trình duyệt để quyết định gọi Controller nào.
+// Ví dụ: URL dạng ?url=admin sẽ kích hoạt phân hệ quản trị.
+$url = isset($_GET['url']) ? $_GET['url'] : 'home';
+
+// ============================================================================
+// 🚨 GHI CHÚ QUAN TRỌNG ĐỂ GHÉP CODE PHÂN HỆ ADMIN (CHO THÀNH VIÊN LÀM ROUTER/AUTH)
+// ============================================================================
+/*
+    Chào bạn phụ trách làm Bộ định tuyến (Router) và Đăng nhập (Auth),
+    Phân hệ Quản trị (Admin) đã được tối ưu hóa và tách file chuẩn cấu trúc MVC.
+    Để trang Admin hoạt động chính thức trong luồng chạy của nhóm, bạn cần lưu ý:
+
+    1. NHÚNG CONTROLLER VÀO FILE NÀY:
+       require_once ".../controllers/AdminController.php";
+
+    2. CẤU HÌNH ĐIỀU HƯỚNG TRONG ROUTER CHÍNH THỨC:
+       Khi router phân tích URL và nhận diện yêu cầu vào trang admin (Ví dụ: case 'admin':),
+       bạn cần thực hiện các chốt chặn và kích hoạt như sau:
+       
+       ------------------------------------------------------------------------
+       // Bước A: Kiểm tra Session xem người dùng đã đăng nhập chưa
+       // Bước B: Kiểm tra quyền hạn xem $_SESSION['user_role'] có phải là 'Admin' hay không
+       
+       // Bước C: Nếu hợp lệ, khởi tạo đối tượng và gọi hàm index để hiển thị giao diện:
+       $admin = new AdminController($dbConnection);
+       $admin->index();
+       exit();
+       ------------------------------------------------------------------------
+
+    3. THÔNG TIN FILE VIEW của Mỹ Kỳ:
+       Giao diện HTML/Bootstrap của Admin hiện đã nằm tại: PTUDW-N07-Social-network/Views/admin/index.php
+       (File View này sẽ tự động nhận các biến $stats, $reports, $members từ Controller sang).
+*/
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -16,7 +64,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/style.css">
 </head>
 
 <body>
@@ -48,12 +96,20 @@
                         <i class="bi bi-star"></i>
                     </a>
 
+<<<<<<< Updated upstream:index.html
                     <a href="login.html" class="header-login-btn" title="Đăng nhập">
+=======
+                    <a href="<?php echo BASE_URL; ?>Views/auth/login.php" class="header-login-btn" title="Đăng nhập">
+>>>>>>> Stashed changes:Public/index.php
                         <i class="bi bi-person"></i>
                         <span>Đăng nhập</span>
                     </a>
 
+<<<<<<< Updated upstream:index.html
                     <a href="register.html" class="header-register-btn" title="Đăng ký">
+=======
+                    <a href="<?php echo BASE_URL; ?>Views/auth/register.php" class="header-register-btn" title="Đăng ký">
+>>>>>>> Stashed changes:Public/index.php
                         <i class="bi bi-plus-lg"></i>
                         <span>Đăng ký</span>
                     </a>
