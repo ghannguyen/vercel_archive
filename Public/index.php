@@ -18,8 +18,8 @@
 
     <link rel="stylesheet" href="CSS/style.css">
 </head>
-<body>
 
+<body>
     <!-- HEADER -->
     <header class="archive-header">
     <div class="container-fluid px-4 px-lg-5">
@@ -48,12 +48,12 @@
                         <i class="bi bi-star"></i>
                     </a>
 
-                    <a href="login.html" class="header-login-btn" title="Đăng nhập">
+                    <a href="login.php" class="header-login-btn" title="Đăng nhập">
                         <i class="bi bi-person"></i>
                         <span>Đăng nhập</span>
                     </a>
 
-                    <a href="register.html" class="header-register-btn" title="Đăng ký">
+                    <a href="register.php" class="header-register-btn" title="Đăng ký">
                         <i class="bi bi-plus-lg"></i>
                         <span>Đăng ký</span>
                     </a>
