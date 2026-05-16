@@ -1,4 +1,6 @@
 <?php
+require_once "C:/xampp/htdocs/PTUDW-N07-Social-network/Config/config.php"; 
+
 // Đóng gói toàn bộ logic quản lý Admin vào một Class để dễ quản lý
 class AdminSystem {
     // sử dụng các mảng [] (Array) để mô phỏng dữ liệu thực tế từ Database
@@ -8,18 +10,18 @@ class AdminSystem {
 
     // Mảng đa chiều lưu danh sách các báo cáo vi phạm
     public $reports = [
-        ['id' => 101, 'user' => 'Linh Chi', 'avatar' => 'img/avatar-101.jpg', 'type' => 'Hình ảnh', 'reason' => 'Nội dung nhạy cảm', 'time' => '10 phút trước', 'status' => 'Chờ duyệt'],
-        ['id' => 102, 'user' => 'Minh Nhật', 'avatar' => 'img/avatar-102.jpg', 'type' => 'Bình luận', 'reason' => 'Ngôn từ gây hấn', 'time' => '1 giờ trước', 'status' => 'Chờ duyệt'],
-        ['id' => 103, 'user' => 'Hoàng Nam', 'avatar' => 'img/avatar-103.jpg', 'type' => 'Bài viết', 'reason' => 'Spam quảng cáo', 'time' => '3 giờ trước', 'status' => 'Đã xử lý'],
-        ['id' => 104, 'user' => 'Bảo Trân', 'avatar' => 'img/avatar-104.jpg', 'type' => 'Tài khoản', 'reason' => 'Mạo danh', 'time' => '5 giờ trước', 'status' => 'Chờ duyệt'],
-        ['id' => 105, 'user' => 'Anh Thư', 'avatar' => 'img/avatar-105.jpg', 'type' => 'Hình ảnh', 'reason' => 'Vi phạm bản quyền', 'time' => 'Hôm qua', 'status' => 'Đã xử lý'],
+        ['id' => 101, 'user' => 'Linh Chi', 'avatar' => 'Public/assets/img/avatar-101.jpg', 'type' => 'Hình ảnh', 'reason' => 'Nội dung nhạy cảm', 'time' => '10 phút trước', 'status' => 'Chờ duyệt'],
+        ['id' => 102, 'user' => 'Minh Nhật', 'avatar' => 'Public/assets/img/avatar-102.jpg', 'type' => 'Bình luận', 'reason' => 'Ngôn từ gây hấn', 'time' => '1 giờ trước', 'status' => 'Chờ duyệt'],
+        ['id' => 103, 'user' => 'Hoàng Nam', 'avatar' => 'Public/assets/img/avatar-103.jpg', 'type' => 'Bài viết', 'reason' => 'Spam quảng cáo', 'time' => '3 giờ trước', 'status' => 'Đã xử lý'],
+        ['id' => 104, 'user' => 'Bảo Trân', 'avatar' => 'Public/assets/img/avatar-104.jpg', 'type' => 'Tài khoản', 'reason' => 'Mạo danh', 'time' => '5 giờ trước', 'status' => 'Chờ duyệt'],
+        ['id' => 105, 'user' => 'Anh Thư', 'avatar' => 'Public/assets/img/avatar-105.jpg', 'type' => 'Hình ảnh', 'reason' => 'Vi phạm bản quyền', 'time' => 'Hôm qua', 'status' => 'Đã xử lý'],
     ];
 
     // Mảng đa chiều lưu danh sách thành viên
     public $members = [
-        ['name' => 'Khánh Linh', 'avatar' => 'img/avatar-106.jpg', 'role' => 'Thành viên', 'joined' => '12/04/2026', 'status' => 'Hoạt động'],
-        ['name' => 'Bảo Hân', 'avatar' => 'img/avatar-107.jpg', 'role' => 'Quản trị viên', 'joined' => '01/01/2026', 'status' => 'Hoạt động'],
-        ['name' => 'Người tình mùa đông', 'avatar' => 'img/avatar-banned.jpg', 'role' => 'Thành viên', 'joined' => '18/04/2026', 'status' => 'Đã khóa'],
+        ['name' => 'Khánh Linh', 'avatar' => 'Public/assets/img/avatar-106.jpg', 'role' => 'Thành viên', 'joined' => '12/04/2026', 'status' => 'Hoạt động'],
+        ['name' => 'Bảo Hân', 'avatar' => 'Public/assets/img/avatar-107.jpg', 'role' => 'Quản trị viên', 'joined' => '01/01/2026', 'status' => 'Hoạt động'],
+        ['name' => 'Người tình mùa đông', 'avatar' => 'Public/assets/img/avatar-banned.jpg', 'role' => 'Thành viên', 'joined' => '18/04/2026', 'status' => 'Đã khóa'],
     ];
 
     // Hàm này để tự động hóa việc render (hiển thị) giao diện dựa trên dữ liệu
@@ -47,8 +49,8 @@ $admin = new AdminSystem();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="CSS/style.css">
-    <link rel="stylesheet" href="CSS/admin-style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/admin-style.css">
 </head>
 
 <body class="admin-body">

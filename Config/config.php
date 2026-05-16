@@ -1,6 +1,9 @@
 <?php
+define("BASE_URL", "http://localhost/PTUDW-N07-Social-network/");
+
 class Database {
-    private $host = "http://100.76.147.122/";
+    private $host = "100.76.147.122";
+
     private $db_name = "db_archive";
     private $username = "root";
     private $password = "";
