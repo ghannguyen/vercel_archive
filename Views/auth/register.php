@@ -1,6 +1,6 @@
 <?php
 if (!defined('BASE_URL')) {
-    define("BASE_URL", "http://localhost/PTUDW-N07-Social-network/");
+    define("BASE_URL", "http://localhost:3000/");
 }
 // Định nghĩa lớp điều khiển AdminController để quản lý phân hệ quản trị
 class AuthController {
