@@ -1,3 +1,22 @@
+<?php
+if (!defined('BASE_URL')) {
+    define("BASE_URL", "http://localhost:3000/");
+}
+// Định nghĩa lớp điều khiển AdminController để quản lý phân hệ quản trị
+class AuthController {
+    // Biến nội bộ dùng để lưu trữ cổng kết nối Cơ sở dữ liệu PDO
+    private $conn;
+
+    /**
+     * Hàm khởi tạo (Constructor)
+     * Nhận đối tượng kết nối Cơ sở dữ liệu từ bên ngoài truyền vào khi khởi tạo lớp
+     */
+    public function __construct($db_connection) {
+        $this->conn = $db_connection;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -5,7 +24,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký thành viên | Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="CSS/login-style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/login-style.css">
     <style>
         /* Tinh chỉnh thêm một chút cho trang đăng ký vì form dài hơn */
         .login-container {
@@ -75,10 +94,10 @@
         </div>
 
         <div class="extra-links" style="justify-content: center;">
-            <p>Đã có tài khoản? <a href="login.php" style="color: var(--primary-color); margin-left: 5px;">Đăng nhập ngay</a></p>
+            <p>Đã có tài khoản? <a href="<?php echo BASE_URL; ?>Views/auth/login.php" style="color: var(--primary-color); margin-left: 5px;">Đăng nhập ngay</a></p>
         </div>
 
-        <a href="index.php" class="back-home"><i class="fa-solid fa-house"></i> Về trang chủ</a>
+        <a href="<?php echo BASE_URL; ?>Public/index.php" class="back-home"><i class="fa-solid fa-house"></i> Về trang chủ</a>
     </div>
 
 </body>

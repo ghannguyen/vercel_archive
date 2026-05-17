@@ -1,4 +1,5 @@
 <?php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -141,7 +142,6 @@ class AuthController {
     public function logout() {
         session_destroy();
         header("Location: " . BASE_URL . "Views/auth/login.php");
-        exit();
-    }
+        exit(); }
 }
 ?>

@@ -1,5 +1,4 @@
-<<<<<<< Updated upstream:Views/login.php
-=======
+
 <?php
 // 1. Khởi động session để hứng và hiển thị thông báo lỗi/thành công từ Controller chuyển hướng về
 if (session_status() == PHP_SESSION_NONE) {
@@ -14,7 +13,27 @@ if (!defined('BASE_URL')) {
 // ĐÃ LOẠI BỎ ĐOẠN KHAI BÁO CLASS AUTHCONTROLLER SAI VỊ TRÍ TẠI ĐÂY
 ?>
 
->>>>>>> Stashed changes:Views/auth/login.php
+
+<?php
+if (!defined('BASE_URL')) {
+define("BASE_URL", "http://localhost:3000/");
+}
+// Định nghĩa lớp điều khiển AdminController để quản lý phân hệ quản trị
+class AuthController {
+    // Biến nội bộ dùng để lưu trữ cổng kết nối Cơ sở dữ liệu PDO
+    private $conn;
+
+    /**
+     * Hàm khởi tạo (Constructor)
+     * Nhận đối tượng kết nối Cơ sở dữ liệu từ bên ngoài truyền vào khi khởi tạo lớp
+     */
+    public function __construct($db_connection) {
+        $this->conn = $db_connection;
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -22,7 +41,7 @@ if (!defined('BASE_URL')) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập | Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="CSS/login-style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/login-style.css">
 </head>
 <body>
 
@@ -62,11 +81,11 @@ if (!defined('BASE_URL')) {
 
         <div class="extra-links">
             <a href="forgot-password.php">Quên mật khẩu?</a>
-            <a href="register.php" style="color: #d39399;">Đăng ký mới</a>
+            <a href="<?php echo BASE_URL; ?>Views/auth/register.php" style="color: #d39399;">Đăng ký mới</a>
         </div>
 
         <br>
-        <a href="index.php" class="back-home"><i class="fa-solid fa-house"></i> Về trang chủ</a>
+        <a href="<?php echo BASE_URL; ?>Public/index.php" class="back-home"><i class="fa-solid fa-house"></i> Về trang chủ</a>
     </div>
 
 </body>

@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="/Public/assets/CSS/style.css">
 </head>
 
 <body>
@@ -191,7 +191,7 @@
 </section>
 
 <!-- JS riêng -->
-<script src="SCRIPT/feed.js"></script>
+<script src="/Public/assets/JS/feed.js"></script>
 
 <!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
