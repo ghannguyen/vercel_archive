@@ -1,17 +1,26 @@
 <?php
+namespace App\Controllers; // 1. Khai báo họ tên danh phận cho Controller
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-require_once __DIR__ . '/../Models/User.php';
+
+// Nhúng file cấu hình và file Model vào nhà chung
+require_once __DIR__ . '/../../Config/Database.php'; 
+require_once __DIR__ . '/../Models/UserModel.php';     
+
+// 2. KHAI BÁO SỬ DỤNG ĐÚNG NAMESPACE
+use App\Models\UserModel;
+use Database;
 
 class AuthController {
     private $conn;
     private $userModel;
 
+    // Hàm khởi tạo nhận kết nối DB truyền vào
     public function __construct($db_connection) {
         $this->conn = $db_connection;
-        $this->userModel = new User($db_connection);
+        $this->userModel = new UserModel($db_connection);
     }
 
     // Xử lý Đăng ký tài khoản
@@ -24,77 +33,74 @@ class AuthController {
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
 
-           
             if (empty($name) || empty($username) || empty($email) || empty($password)) {
                 $_SESSION['error'] = "Vui lòng nhập đầy đủ tất cả các trường.";
-                header("Location: " . BASE_URL . "Views/auth/register.php");
+                header("Location: " . BASE_URL . "App/Views/auth/register.php");
                 exit();
             }
 
             if ($password !== $confirm_password) {
-                $_SESSION['error'] = "Mật khẩu xác nhận không trùng khớp.";
-                header("Location: " . BASE_URL . "Views/auth/register.php");
+                $_SESSION['error'] = "Mật khẩu xác nhận không khớp.";
+                header("Location: " . BASE_URL . "App/Views/auth/register.php");
                 exit();
             }
 
+            // Kiểm tra trùng lặp qua hàm exists của UserModel
             if ($this->userModel->exists($username, $email)) {
                 $_SESSION['error'] = "Tài khoản hoặc Email này đã tồn tại trên hệ thống.";
-                header("Location: " . BASE_URL . "Views/auth/register.php");
+                header("Location: " . BASE_URL . "App/Views/auth/register.php");
                 exit();
             }
 
-            // Tiến hành lưu vào CSDL
+            // Tiến hành đăng ký
             if ($this->userModel->register($name, $username, $email, $password)) {
-                $_SESSION['success'] = "Đăng ký thành công! Hãy đăng nhập.";
-                header("Location: " . BASE_URL . "Views/auth/login.php");
+                $_SESSION['success'] = "Đăng ký thành công! Hãy đăng nhập ngay.";
+                header("Location: " . BASE_URL . "App/Views/auth/login.php");
                 exit();
             } else {
-                $_SESSION['error'] = "Đã xảy ra lỗi trong quá trình đăng ký.";
-                header("Location: " . BASE_URL . "Views/auth/register.php");
+                $_SESSION['error'] = "Đã xảy ra sự cố trong quá trình lưu dữ liệu.";
+                header("Location: " . BASE_URL . "App/Views/auth/register.php");
                 exit();
             }
         }
     }
 
-    // Xử lý Đăng nhập & Phân quyền
-    
+    // Xử lý Đăng nhập tài khoản
     public function loginProcess() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = trim($_POST['username'] ?? '');
+            $login_input = trim($_POST['username'] ?? '');
             $password = $_POST['password'] ?? '';
 
-            if (empty($username) || empty($password)) {
-                $_SESSION['error'] = "Tài khoản và mật khẩu không được để trống.";
-                header("Location: " . BASE_URL . "Views/auth/login.php");
+            if (empty($login_input) || empty($password)) {
+                $_SESSION['error'] = "Vui lòng nhập tài khoản và mật khẩu.";
+                header("Location: " . BASE_URL . "App/Views/auth/login.php");
                 exit();
             }
 
-            $user = $this->userModel->findByCredentials($username);
+            // Tìm user dựa vào tài khoản/email
+            $user = $this->userModel->findByCredentials($login_input);
 
-            // TẠM SỬA TẠI ĐÂY: So sánh chuỗi thuần trực tiếp giống hệt database (Khớp cả cột PasswordHash hoặc Password)
-            $db_password = $user['PasswordHash'] ?? $user['Password'] ?? '';
-
-            if ($user && $password === $db_password) {
+            // Kiểm tra mật khẩu (Giả định team đang lưu chuỗi thuần hoặc đã hash)
+            // LƯU Ý: Nếu dùng hash password_hash, hãy đổi dòng dưới thành: if ($user && password_verify($password, $user['PasswordHash']))
+            if ($user && password_verify($password, $user['PasswordHash'])) {
                 
-                // Thiết lập Session đăng nhập
+                // Lưu thông tin vào session để các trang feed, profile nhận diện
                 $_SESSION['user_id'] = $user['UserID'];
                 $_SESSION['username'] = $user['Username'];
-                $_SESSION['user_name'] = $user['FullName'] ?? $user['Name'] ?? '';
-                $_SESSION['role_name'] = $user['RoleName'] ?? 'Thành viên'; 
-                $_SESSION['ProfilePictureUrl'] = $user['ProfilePictureUrl'] ?? '';
+                $_SESSION['user_name'] = $user['FullName'];
+                $_SESSION['ProfilePictureUrl'] = $user['ProfilePictureUrl'];
+                $_SESSION['role'] = $user['RoleName'];
 
-                // LOGIC ĐIỀU HƯỚNG VÀO ADMIN TRỰC TIẾP
-                if ($_SESSION['role_name'] === 'Quản trị viên' || (isset($user['RoleID']) && $user['RoleID'] == 1)) {
-                    // Nếu là Admin -> Vào khu vực quản trị views/admin/index.php
-                    header("Location: " . BASE_URL . "Views/admin/index.php");
+                // Phân quyền: Nếu là Admin dắt qua trang quản trị, ngược lại qua bảng tin chính
+                if ($user['RoleName'] === 'Admin') {
+                    header("Location: " . BASE_URL . "App/Views/admin/dashboard.php");
                 } else {
-                    // Nếu là User thường -> Trỏ ra index.php ở gốc
-                    header("Location: " . BASE_URL . "Views/feed.php");
+                    header("Location: " . BASE_URL . "App/Views/feed.php");
                 }
                 exit();
             } else {
                 $_SESSION['error'] = "Tài khoản hoặc mật khẩu không chính xác.";
-                header("Location: " . BASE_URL . "Views/auth/login.php");
+                header("Location: " . BASE_URL . "App/Views/auth/login.php");
                 exit();
             }
         }
@@ -107,33 +113,32 @@ class AuthController {
             $new_password = $_POST['new_password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
 
-         
             if (empty($email) || empty($new_password)) {
                 $_SESSION['error'] = "Vui lòng nhập đầy đủ thông tin.";
-                header("Location: " . BASE_URL . "Views/auth/forgotpassword.php");
+                header("Location: " . BASE_URL . "App/Views/auth/forgotpassword.php");
                 exit();
             }
 
             if ($new_password !== $confirm_password) {
                 $_SESSION['error'] = "Mật khẩu mới xác nhận không khớp.";
-                header("Location: " . BASE_URL . "Views/auth/forgotpassword.php");
+                header("Location: " . BASE_URL . "App/Views/auth/forgotpassword.php");
                 exit();
             }
 
             $user = $this->userModel->findByCredentials($email);
             if (!$user) {
                 $_SESSION['error'] = "Không tìm thấy tài khoản nào liên kết với Email này.";
-                header("Location: " . BASE_URL . "Views/auth/forgotpassword.php");
+                header("Location: " . BASE_URL . "App/Views/auth/forgotpassword.php");
                 exit();
             }
 
             if ($this->userModel->updatePassword($email, $new_password)) {
                 $_SESSION['success'] = "Đổi mật khẩu thành công! Hãy đăng nhập lại bằng mật khẩu mới.";
-                header("Location: " . BASE_URL . "Views/auth/login.php");
+                header("Location: " . BASE_URL . "App/Views/auth/login.php");
                 exit();
             } else {
                 $_SESSION['error'] = "Không thể cập nhật mật khẩu lúc này.";
-                header("Location: " . BASE_URL . "Views/auth/forgotpassword.php");
+                header("Location: " . BASE_URL . "App/Views/auth/forgotpassword.php");
                 exit();
             }
         }
@@ -142,7 +147,7 @@ class AuthController {
     // Đăng xuất xóa session
     public function logout() {
         session_destroy();
-        header("Location: " . BASE_URL . "Views/auth/login.php");
-        exit(); }
+        header("Location: " . BASE_URL . "App/Views/auth/login.php");
+        exit();
+    }
 }
-?>

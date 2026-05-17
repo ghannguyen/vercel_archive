@@ -1,5 +1,8 @@
 <?php
-class User {
+namespace App\Models; 
+
+use PDO; 
+class UserModel {
     private $conn;
     private $table = "Users";
 
@@ -22,17 +25,17 @@ class User {
     public function register($name, $username, $email, $password) {
         $query = "INSERT INTO " . $this->table . " (FullName, Username, Email, PasswordHash, RoleID, CreatedAt) 
                   VALUES (:name, :username, :email, :password, 2, NOW())";
-        // $stmt = $this->conn->prepare($query);
+        $stmt = $this->conn->prepare($query);
         
-        // // Hash mật khẩu bảo mật bằng BCRYPT
-        // $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        // Hash mật khẩu bảo mật bằng BCRYPT
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // $stmt->bindParam(':name', $name);
-        // $stmt->bindParam(':username', $username);
-        // $stmt->bindParam(':email', $email);
-        // $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $hashed_password);
 
-        // return $stmt->execute();
+        return $stmt->execute();
     }
 
     // Tìm người dùng bằng Username hoặc Email để Đăng nhập / Quên mật khẩu

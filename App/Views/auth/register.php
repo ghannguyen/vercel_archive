@@ -43,8 +43,7 @@ class AuthController {
     </style>
 </head>
 <body>
-<!-- thay đổi -->
-    <div class="login-container">
+<div class="login-container">
         <h2>Tham gia cùng chúng mình!</h2>
         <p class="subtitle">Tạo tài khoản để kết nối và chia sẻ ngay</p>
                 <?php if(isset($_SESSION['error'])): ?>
@@ -58,7 +57,7 @@ class AuthController {
                 <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
-        <form action="process-register.php" method="POST">
+        <form action="<?php echo BASE_URL; ?>App/Views/auth/process-register.php" method="POST">
             <div class="register-grid">
                 <div class="form-group full-width">
                     <label for="fullname">Họ và Tên</label>
@@ -94,7 +93,7 @@ class AuthController {
         </div>
 
         <div class="extra-links" style="justify-content: center;">
-            <p>Đã có tài khoản? <a href="<?php echo BASE_URL; ?>Views/auth/login.php" style="color: var(--primary-color); margin-left: 5px;">Đăng nhập ngay</a></p>
+            <p>Đã có tài khoản? <a href="<?php echo BASE_URL; ?>App/Views/auth/login.php" style="color: var(--primary-color); margin-left: 5px;">Đăng nhập ngay</a></p>
         </div>
 
         <a href="<?php echo BASE_URL; ?>Public/index.php" class="back-home"><i class="fa-solid fa-house"></i> Về trang chủ</a>

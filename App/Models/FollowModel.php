@@ -1,5 +1,6 @@
 <?php
-
+namespace App\Models; 
+use PDO; 
 class FollowModel {
     private $conn;
 

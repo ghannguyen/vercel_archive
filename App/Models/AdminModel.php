@@ -1,4 +1,6 @@
 <?php
+namespace App\Models; // ✨ Thêm dòng này vào đầu file AdminModel.php
+use PDO; 
 class AdminModel {
     private $conn;
 
