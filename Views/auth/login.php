@@ -1,6 +1,22 @@
+
+<?php
+// 1. Khởi động session để hứng và hiển thị thông báo lỗi/thành công từ Controller chuyển hướng về
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 2. Định nghĩa hằng số đường dẫn gốc hệ thống
+if (!defined('BASE_URL')) {
+    define("BASE_URL", "http://localhost:3000/");
+}
+
+// ĐÃ LOẠI BỎ ĐOẠN KHAI BÁO CLASS AUTHCONTROLLER SAI VỊ TRÍ TẠI ĐÂY
+?>
+
+
 <?php
 if (!defined('BASE_URL')) {
-    define("BASE_URL", "http://localhost/PTUDW-N07-Social-network/");
+define("BASE_URL", "http://localhost:3000/");
 }
 // Định nghĩa lớp điều khiển AdminController để quản lý phân hệ quản trị
 class AuthController {
@@ -17,6 +33,7 @@ class AuthController {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -31,7 +48,19 @@ class AuthController {
     <div class="login-container">
         <h2>Xin chào!</h2>
         <p class="subtitle">Vui lòng đăng nhập để kết nối với bạn bè</p>
-        
+      
+        <?php if(isset($_SESSION['error'])): ?>
+            <div style="color: #dc3545; padding: 8px; margin-bottom: 15px; font-size: 14px; text-align: center; background: rgba(220, 53, 69, 0.08); border-radius: 4px;">
+                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if(isset($_SESSION['success'])): ?>
+            <div style="color: #198754; padding: 8px; margin-bottom: 15px; font-size: 14px; text-align: center; background: rgba(25, 135, 84, 0.08); border-radius: 4px;">
+                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+
         <form action="process-login.php" method="POST">
             <div class="form-group">
                 <label for="username"><i class="fa-regular fa-user"></i> Tài khoản</label>
