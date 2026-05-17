@@ -22,7 +22,16 @@ class PostController {
     public function create() {
         header('Content-Type: application/json; charset=utf-8');
 
-        $userId = $_SESSION['UserID'] ?? 1;
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Bạn chưa đăng nhập."
+            ]);
+            return;
+        }
+
         $content = trim($_POST['content'] ?? '');
 
         if ($content === '' && empty($_FILES['images']['name'][0])) {
@@ -46,7 +55,7 @@ class PostController {
         $uploadedImages = [];
 
         if (!empty($_FILES['images']['name'][0])) {
-            $uploadDir = __DIR__ . '/../Public/assets/img/posts/';;
+            $uploadDir = __DIR__ . '/../Public/assets/img/posts/';
 
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
@@ -82,8 +91,8 @@ class PostController {
                 "PostID" => $postId,
                 "Content" => $content,
                 "Images" => $uploadedImages,
-                "FullName" => $_SESSION['FullName'] ?? 'Bạn',
-                "Username" => $_SESSION['Username'] ?? 'demo_user',
+                "FullName" => $_SESSION['user_name'] ?? 'Bạn',
+                "Username" => $_SESSION['username'] ?? 'demo_user',
                 "ProfilePictureUrl" => $_SESSION['ProfilePictureUrl'] ?? '',
                 "LikeCount" => 0,
                 "CommentCount" => 0,
@@ -95,7 +104,16 @@ class PostController {
     public function like() {
         header('Content-Type: application/json; charset=utf-8');
 
-        $userId = $_SESSION['UserID'] ?? 1;
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Bạn chưa đăng nhập."
+            ]);
+            return;
+        }
+
         $postId = $_POST['postId'] ?? null;
 
         if (!$postId) {
@@ -119,7 +137,16 @@ class PostController {
     public function comment() {
         header('Content-Type: application/json; charset=utf-8');
 
-        $userId = $_SESSION['UserID'] ?? 1;
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Bạn chưa đăng nhập."
+            ]);
+            return;
+        }
+
         $postId = $_POST['postId'] ?? null;
         $content = trim($_POST['content'] ?? '');
 
@@ -137,13 +164,14 @@ class PostController {
             "success" => $result,
             "comment" => [
                 "content" => $content,
-                "fullName" => $_SESSION['FullName'] ?? 'Bạn'
+                "fullName" => $_SESSION['user_name'] ?? $_SESSION['username'] ?? 'Bạn'
             ]
         ]);
     }
+
     public function getComments($postId) {
-    return $this->postModel->getCommentsByPostId($postId);
-}
+        return $this->postModel->getCommentsByPostId($postId);
+    }
 }
 
 if (isset($_GET['action'])) {
@@ -160,6 +188,5 @@ if (isset($_GET['action'])) {
     if ($_GET['action'] === 'comment') {
         $controller->comment();
     }
-
 }
 ?>
