@@ -10,7 +10,7 @@ if (!defined('BASE_URL')) {
 
 // 2. CHẶN LỖI: Nếu chưa đăng nhập, bắt buộc đá về trang login ngay lập tức
 if (!isset($_SESSION['user_id'])) {
-    header("Location: " . BASE_URL . "Views/auth/login.php");
+    header("Location: " . BASE_URL . "App/Views/auth/login.php");
     exit();
 }
 
@@ -23,22 +23,28 @@ $currentAvatar   = $_SESSION['ProfilePictureUrl'] ?? '';
 require_once __DIR__ . '/../Controllers/PostController.php';
 require_once __DIR__ . '/../Controllers/FollowController.php';
 
+// KHAI BÁO SỬ DỤNG NAMESPACE ĐỂ KHÔNG BỊ VS CODE CHỬI VÀNG KHÈ KHỞI TẠO CONTROLLER
+use App\Controllers\PostController;
+use App\Controllers\FollowController;
+
 $postController = new PostController();
 $posts = $postController->index();
 
 $followController = new FollowController();
 $suggestedUsers = $followController->getSuggestedUsers($currentUserId);
 
+// FIX PATH AVATAR: Sửa lại hàm xử lý đường dẫn ảnh tuyệt đối dựa trên hằng số BASE_URL
 function imagePath($path) {
     if (empty($path)) {
-        return "/Public/assets/img/default-avatar.jpg";
+        return BASE_URL . "Public/assets/img/default-avatar.jpg";
     }
 
     if (str_starts_with($path, "http://") || str_starts_with($path, "https://")) {
         return $path;
     }
 
-    return "/" . ltrim($path, "/");
+    $cleanPath = str_replace("Public/", "", $path);
+    return BASE_URL . "Public/" . ltrim($cleanPath, "/");
 }
 
 function timeAgo($datetime) {
@@ -63,7 +69,7 @@ function timeAgo($datetime) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/Public/assets/CSS/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/style.css">
 </head>
 
 <body>
@@ -85,7 +91,7 @@ function timeAgo($datetime) {
                 <div class="header-actions">
                     <a href="#" class="header-search-btn"><i class="bi bi-search"></i></a>
                     <a href="#" class="header-star-btn"><i class="bi bi-star"></i></a>
-                    <a href="profile.php" class="header-login-btn">
+                    <a href="<?php echo BASE_URL; ?>App/Views/profile.php" class="header-login-btn">
                         <i class="bi bi-person-circle"></i>
                         <span>Hồ sơ</span>
                     </a>
@@ -102,18 +108,15 @@ function timeAgo($datetime) {
             <div class="col-lg-1 d-none d-lg-block">
             <aside class="left-sidebar d-flex flex-column align-items-center gap-4">
 
-            <!-- LOGO -->
             <div class="sidebar-logo"> <i class="bi bi-circle-square"></i> </div>
 
-            <!-- HOME -->
             <a 
-                href="feed.php"
+                href="<?php echo BASE_URL; ?>App/Views/feed.php"
                 class="sidebar-icon active"
                 id="nav-home"
                 title="Trang chủ"
             > <i class="bi bi-house-door-fill"></i> </a>
 
-            <!-- SEARCH -->
             <a 
                 href="#"
                 class="sidebar-icon"
@@ -123,7 +126,6 @@ function timeAgo($datetime) {
                 <i class="bi bi-search"></i>
             </a>
 
-            <!-- CREATE POST -->
             <a 
                 href="#"
                 class="sidebar-icon"
@@ -133,7 +135,6 @@ function timeAgo($datetime) {
                 <i class="bi bi-plus-square"></i>
             </a>
 
-            <!-- NOTIFICATIONS -->
             <a 
                 href="#"
                 class="sidebar-icon"
@@ -143,9 +144,8 @@ function timeAgo($datetime) {
                 <i class="bi bi-heart"></i>
             </a>
 
-            <!-- PROFILE -->
             <a 
-                href="profile.php"
+                href="<?php echo BASE_URL; ?>App/Views/profile.php"
                 class="sidebar-icon"
                 id="nav-profile"
                 title="Hồ sơ"
@@ -298,47 +298,46 @@ function timeAgo($datetime) {
 
             <div class="col-lg-4 col-md-4">
                 <div class="bg-light login-card p-4 mb-4">
-    <h2 class="login-card-title text-center mb-3">Gợi ý theo dõi</h2>
+                    <h2 class="login-card-title text-center mb-3">Gợi ý theo dõi</h2>
 
-    <div class="d-flex flex-column gap-3">
-        <?php if (!empty($suggestedUsers)): ?>
-            <?php foreach ($suggestedUsers as $user): ?>
-                <div class="d-flex align-items-center justify-content-between follower-item">
-                    <div class="d-flex align-items-center gap-3">
-                        <img 
-                            src="<?= imagePath($user['ProfilePictureUrl'] ?? '') ?>" 
-                            class="avatar" 
-                            alt="avatar"
-                        >
+                    <div class="d-flex flex-column gap-3">
+                        <?php if (!empty($suggestedUsers)): ?>
+                            <?php foreach ($suggestedUsers as $user): ?>
+                                <div class="d-flex align-items-center justify-content-between follower-item">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img 
+                                            src="<?= imagePath($user['ProfilePictureUrl'] ?? '') ?>" 
+                                            class="avatar" 
+                                            alt="avatar"
+                                        >
 
-                        <div>
-                            <div class="fw-semibold">
-                                <?= htmlspecialchars($user['FullName'] ?: $user['Username']) ?>
-                            </div>
+                                        <div>
+                                            <div class="fw-semibold">
+                                                <?= htmlspecialchars($user['FullName'] ?: $user['Username']) ?>
+                                            </div>
 
-                            <small class="text-muted">
-                                @<?= htmlspecialchars($user['Username']) ?>
-                            </small>
-                        </div>
+                                            <small class="text-muted">
+                                                @<?= htmlspecialchars($user['Username']) ?>
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        type="button"
+                                        class="btn btn-sm <?= $user['IsFollowing'] ? 'btn-secondary' : 'btn-pink' ?>"
+                                        onclick="toggleFollow(this)"
+                                        data-user-id="<?= $user['UserID'] ?>"
+                                    >
+                                        <?= $user['IsFollowing'] ? 'Đang theo dõi' : 'Theo dõi' ?>
+                                    </button>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="text-muted text-center mb-0">
+                                Chưa có người dùng nào để gợi ý.
+                            </p>
+                        <?php endif; ?>
                     </div>
-
-                    <button 
-                        type="button"
-                        class="btn btn-sm <?= $user['IsFollowing'] ? 'btn-secondary' : 'btn-pink' ?>"
-                        onclick="toggleFollow(this)"
-                        data-user-id="<?= $user['UserID'] ?>"
-                    >
-                        <?= $user['IsFollowing'] ? 'Đang theo dõi' : 'Theo dõi' ?>
-                    </button>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="text-muted text-center mb-0">
-                Chưa có người dùng nào để gợi ý.
-            </p>
-        <?php endif; ?>
-    </div>
-</div>
                 </div>
 
                 <div class="bg-white p-4 post-card">
@@ -353,7 +352,7 @@ function timeAgo($datetime) {
     </div>
 </section>
 
-<script src="/Public/assets/JS/feed.js"></script>
+<script src="<?php echo BASE_URL; ?>Public/assets/JS/feed.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

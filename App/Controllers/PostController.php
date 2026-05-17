@@ -1,10 +1,16 @@
 <?php
+namespace App\Controllers; // ✨ 1. Thêm namespace cho Controller
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../Config/Database.php';
-require_once __DIR__ . '/../Models/PostModel.php';
+require_once __DIR__ . '/../../Config/Database.php'; 
+require_once __DIR__ . '/../Models/PostModel.php';     
+
+// ✨ 2. Khai báo sử dụng lớp PostModel từ bên thư mục Models và lớp Database từ gốc
+use App\Models\PostModel;
+use Database;
 
 class PostController {
     private $postModel;
@@ -171,22 +177,6 @@ class PostController {
 
     public function getComments($postId) {
         return $this->postModel->getCommentsByPostId($postId);
-    }
-}
-
-if (isset($_GET['action'])) {
-    $controller = new PostController();
-
-    if ($_GET['action'] === 'create') {
-        $controller->create();
-    }
-
-    if ($_GET['action'] === 'like') {
-        $controller->like();
-    }
-
-    if ($_GET['action'] === 'comment') {
-        $controller->comment();
     }
 }
 ?>

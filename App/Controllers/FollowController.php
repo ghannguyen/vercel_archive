@@ -1,10 +1,14 @@
 <?php
+namespace App\Controllers; // Thêm namespace cho Controller
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../Config/Database.php';
-require_once __DIR__ . '/../Models/FollowModel.php';
+require_once __DIR__ . '/../../Config/Database.php'; // Đi lùi 2 cấp ra hẳn ngoài gốc để tìm Config
+require_once __DIR__ . '/../Models/FollowModel.php';     // Chỉ cần lùi 1 cấp là thấy anh bạn hàng xóm Models rồi
+
+use App\Models\FollowModel;
+use Database;
 
 class FollowController {
     private $followModel;

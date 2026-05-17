@@ -1,37 +1,62 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-$profileName = "Thanh Tuyen";
-$profileUsername = "@thanhtuyen";
-$profileBio = "Mình thích giao diện tối giản, nhẹ nhàng và lưu lại những suy nghĩ nhỏ mỗi ngày.";
-$profileAvatar = "https://i.pravatar.cc/140?img=12";
+// 1. Định nghĩa hằng số đường dẫn gốc hệ thống nếu chưa có để dứt điểm lỗi Fatal Error
+if (!defined('BASE_URL')) {
+    define("BASE_URL", "http://localhost:3000/");
+}
 
-$totalPosts = 24;
-$totalFollowing = 842;
-$totalFollowers = "1.2K";
+// 2. NHẬN DỮ LIỆU ĐỘNG TỪ CONTROLLER TRUYỀN QUA (NẾU CÓ), NẾU CHƯA CÓ LẤY DỮ LIỆU CŨ LÀM MẶC ĐỊNH
+$profileName     = $profile['FullName'] ?? $_SESSION['user_name'] ?? $profileName ?? "Thanh Tuyen";
+$profileUsername = $profile['Username'] ?? $_SESSION['username'] ?? $profileUsername ?? "@thanhtuyen";
+$profileBio      = $profile['Bio'] ?? $profileBio ?? "Mình thích giao diện tối giản, nhẹ nhàng và lưu lại những suy nghĩ nhỏ mỗi ngày.";
+$profileAvatar   = $profile['ProfilePictureUrl'] ?? $profileAvatar ?? "https://i.pravatar.cc/140?img=12";
 
-$posts = [
-    [
-        "name" => "Thanh Tuyen",
-        "time" => "2 giờ",
-        "avatar" => "https://i.pravatar.cc/60?img=12",
-        "content" => "Có những ngày chỉ cần một góc nhỏ đủ yên để viết vài dòng là thấy nhẹ hơn.",
-        "image" => "",
-        "likes" => 18,
-        "comments" => 5,
-        "shares" => 2
-    ],
-    [
-        "name" => "Thanh Tuyen",
-        "time" => "1 ngày",
-        "avatar" => "https://i.pravatar.cc/60?img=12",
-        "content" => "Mình đang thử thiết kế một giao diện mạng xã hội tối giản.",
-        "image" => "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
-        "likes" => 26,
-        "comments" => 8,
-        "shares" => 3
-    ]
-];
+$totalPosts      = $stats['posts'] ?? $totalPosts ?? 24;
+$totalFollowing  = $stats['following'] ?? $totalFollowing ?? 842;
+$totalFollowers  = $stats['followers'] ?? $totalFollowers ?? "1.2K";
+
+// Nếu Controller có truyền mảng bài viết thật qua thì lấy, không thì chạy mảng mẫu bên dưới
+if (!isset($posts) || empty($posts)) {
+    $posts = [
+        [
+            "name" => "Thanh Tuyen",
+            "time" => "2 giờ",
+            "avatar" => "https://i.pravatar.cc/60?img=12",
+            "content" => "Có những ngày chỉ cần một góc nhỏ đủ yên để viết vài dòng là thấy nhẹ hơn.",
+            "image" => "",
+            "likes" => 18,
+            "comments" => 5,
+            "shares" => 2
+        ],
+        [
+            "name" => "Thanh Tuyen",
+            "time" => "1 ngày",
+            "avatar" => "https://i.pravatar.cc/60?img=12",
+            "content" => "Mình đang thử thiết kế một giao diện mạng xã hội tối giản.",
+            "image" => "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
+            "likes" => 26,
+            "comments" => 8,
+            "shares" => 3
+        ]
+    ];
+}
+
+// Hàm helper để giải quyết vấn đề link ảnh Avatar tuyệt đối động
+if (!function_exists('profileImagePath')) {
+    function profileImagePath($path) {
+        if (empty($path)) {
+            return BASE_URL . "Public/assets/img/default-avatar.jpg";
+        }
+        if (str_starts_with($path, "http://") || str_starts_with($path, "https://")) {
+            return $path;
+        }
+        $cleanPath = str_replace("Public/", "", $path);
+        return BASE_URL . "Public/" . ltrim($cleanPath, "/");
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -41,23 +66,17 @@ $posts = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Archive - Hồ sơ</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="CSS/style.css">
-    <link rel="stylesheet" href="CSS/profile.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/style.css">
 </head>
 
 <body class="profile-page">
 
-<!-- HEADER -->
 <header class="archive-header">
     <div class="container-fluid px-4 px-lg-5">
         <div class="row align-items-center py-3">
@@ -74,7 +93,7 @@ $posts = [
 
             <div class="col-4 d-flex justify-content-end">
                 <div class="header-actions">
-                    <a href="feed.php" class="header-search-btn">
+                    <a href="<?php echo BASE_URL; ?>App/Views/feed.php" class="header-search-btn">
                         <i class="bi bi-house-door"></i>
                     </a>
 
@@ -82,7 +101,7 @@ $posts = [
                         <i class="bi bi-star"></i>
                     </a>
 
-                    <a href="profile.php" class="header-login-btn">
+                    <a href="<?php echo BASE_URL; ?>App/Views/profile.php" class="header-login-btn">
                         <i class="bi bi-person-circle"></i>
                         <span>Hồ sơ</span>
                     </a>
@@ -93,19 +112,17 @@ $posts = [
     </div>
 </header>
 
-<!-- PROFILE -->
 <section class="profile-section py-5">
 <div class="container-fluid px-3 px-lg-4">
 <div class="row g-4">
 
-    <!-- SIDEBAR -->
     <div class="col-lg-1 d-none d-lg-block">
         <aside class="left-sidebar d-flex flex-column align-items-center gap-4">
             <div class="sidebar-logo">
                 <i class="bi bi-circle-square"></i>
             </div>
 
-            <a href="feed.php" class="sidebar-icon">
+            <a href="<?php echo BASE_URL; ?>App/Views/feed.php" class="sidebar-icon">
                 <i class="bi bi-house-door-fill"></i>
             </a>
 
@@ -121,7 +138,7 @@ $posts = [
                 <i class="bi bi-heart"></i>
             </a>
 
-            <a href="profile.php" class="sidebar-icon active">
+            <a href="<?php echo BASE_URL; ?>App/Views/profile.php" class="sidebar-icon active">
                 <i class="bi bi-person"></i>
             </a>
 
@@ -131,17 +148,16 @@ $posts = [
         </aside>
     </div>
 
-    <!-- PROFILE CARD -->
     <div class="col-lg-3">
         <div class="bg-white p-4 profile-card text-center h-100">
 
-            <img src="<?php echo $profileAvatar; ?>" class="profile-avatar mb-3" alt="Avatar">
+            <img src="<?php echo profileImagePath($profileAvatar); ?>" class="profile-avatar mb-3" alt="Avatar">
 
-            <h2 class="profile-name"><?php echo $profileName; ?></h2>
-            <p class="profile-username"><?php echo $profileUsername; ?></p>
+            <h2 class="profile-name"><?php echo htmlspecialchars($profileName); ?></h2>
+            <p class="profile-username"><?php echo htmlspecialchars($profileUsername); ?></p>
 
             <p class="profile-bio">
-                <?php echo $profileBio; ?>
+                <?php echo htmlspecialchars($profileBio); ?>
             </p>
 
             <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
@@ -174,7 +190,6 @@ $posts = [
         </div>
     </div>
 
-    <!-- POSTS -->
     <div class="col-lg-8">
 
         <div class="bg-light p-4 profile-intro-card mb-4">
@@ -196,19 +211,24 @@ $posts = [
             <div class="bg-white post-card mb-3">
                 <div class="p-3">
                     <div class="d-flex gap-3">
-                        <img src="<?php echo $post['avatar']; ?>" class="avatar" alt="Avatar">
+                        <img src="<?php echo profileImagePath($post['avatar']); ?>" class="avatar" alt="Avatar">
 
                         <div>
                             <div class="fw-semibold">
-                                <?php echo $post['name']; ?> • <?php echo $post['time']; ?>
+                                <?php echo htmlspecialchars($post['name']); ?> • <?php echo $post['time']; ?>
                             </div>
 
                             <p class="post-text">
-                                <?php echo $post['content']; ?>
+                                <?php echo nl2br(htmlspecialchars($post['content'])); ?>
                             </p>
 
                             <?php if (!empty($post['image'])): ?>
-                                <img src="<?php echo $post['image']; ?>" class="profile-post-image mt-2" alt="Post image">
+                                <img 
+                                    src="<?php echo profileImagePath($post['image']); ?>" 
+                                    class="profile-post-image mt-2" 
+                                    style="max-width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 8px;" 
+                                    alt="Post image"
+                                >
                             <?php endif; ?>
 
                             <div class="post-actions d-flex gap-4 mt-2">

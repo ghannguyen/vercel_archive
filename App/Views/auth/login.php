@@ -1,4 +1,3 @@
-
 <?php
 // 1. Khởi động session để hứng và hiển thị thông báo lỗi/thành công từ Controller chuyển hướng về
 if (session_status() == PHP_SESSION_NONE) {
@@ -10,14 +9,6 @@ if (!defined('BASE_URL')) {
     define("BASE_URL", "http://localhost:3000/");
 }
 
-// ĐÃ LOẠI BỎ ĐOẠN KHAI BÁO CLASS AUTHCONTROLLER SAI VỊ TRÍ TẠI ĐÂY
-?>
-
-
-<?php
-if (!defined('BASE_URL')) {
-define("BASE_URL", "http://localhost:3000/");
-}
 // Định nghĩa lớp điều khiển AdminController để quản lý phân hệ quản trị
 class AuthController {
     // Biến nội bộ dùng để lưu trữ cổng kết nối Cơ sở dữ liệu PDO
@@ -25,7 +16,7 @@ class AuthController {
 
     /**
      * Hàm khởi tạo (Constructor)
-     * Nhận đối tượng kết nối Cơ sở dữ liệu từ bên ngoài truyền vào khi khởi tạo lớp
+     * Nhận đối tượng kết nối Cơ sở dữ liệu PDO từ bên ngoài truyền vào khi khởi tạo lớp
      */
     public function __construct($db_connection) {
         $this->conn = $db_connection;
@@ -48,7 +39,7 @@ class AuthController {
     <div class="login-container">
         <h2>Xin chào!</h2>
         <p class="subtitle">Vui lòng đăng nhập để kết nối với bạn bè</p>
-      
+
         <?php if(isset($_SESSION['error'])): ?>
             <div style="color: #dc3545; padding: 8px; margin-bottom: 15px; font-size: 14px; text-align: center; background: rgba(220, 53, 69, 0.08); border-radius: 4px;">
                 <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
@@ -61,7 +52,7 @@ class AuthController {
             </div>
         <?php endif; ?>
 
-        <form action="process-login.php" method="POST">
+        <form action="<?php echo BASE_URL; ?>App/Views/auth/process-login.php" method="POST">
             <div class="form-group">
                 <label for="username"><i class="fa-regular fa-user"></i> Tài khoản</label>
                 <input type="text" id="username" name="username" placeholder="Tên đăng nhập hoặc Email" required>
@@ -80,12 +71,9 @@ class AuthController {
         </div>
 
         <div class="extra-links">
-            <a href="forgot-password.php">Quên mật khẩu?</a>
-            <a href="<?php echo BASE_URL; ?>Views/auth/register.php" style="color: #d39399;">Đăng ký mới</a>
+            <a href="<?php echo BASE_URL; ?>App/Views/auth/forgot-password.php">Quên mật khẩu?</a>
+            <a href="<?php echo BASE_URL; ?>App/Views/auth/register.php">Chưa có tài khoản? Đăng ký</a>
         </div>
-
-        <br>
-        <a href="<?php echo BASE_URL; ?>Public/index.php" class="back-home"><i class="fa-solid fa-house"></i> Về trang chủ</a>
     </div>
 
 </body>
