@@ -81,6 +81,7 @@ class AuthController {
                 $_SESSION['username'] = $user['Username'];
                 $_SESSION['user_name'] = $user['FullName'] ?? $user['Name'] ?? '';
                 $_SESSION['role_name'] = $user['RoleName'] ?? 'Thành viên'; 
+                $_SESSION['ProfilePictureUrl'] = $user['ProfilePictureUrl'] ?? '';
 
                 // LOGIC ĐIỀU HƯỚNG VÀO ADMIN TRỰC TIẾP
                 if ($_SESSION['role_name'] === 'Quản trị viên' || (isset($user['RoleID']) && $user['RoleID'] == 1)) {

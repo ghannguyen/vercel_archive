@@ -3,21 +3,25 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../Controllers/PostController.php';
-require_once __DIR__ . '/../Controllers/FollowController.php';
-// TẠM THỜI TEST USER ID = 1
-// Sau này có login thật thì bỏ đoạn fake này
-if (!isset($_SESSION['UserID'])) {
-    $_SESSION['UserID'] = 1;
-    $_SESSION['Username'] = 'demo_user';
-    $_SESSION['FullName'] = 'Bạn';
-    $_SESSION['ProfilePictureUrl'] = '';
+// 1. Định nghĩa hằng số đường dẫn gốc hệ thống nếu chưa có
+if (!defined('BASE_URL')) {
+    define("BASE_URL", "http://localhost:3000/");
 }
 
-$currentUserId = $_SESSION['UserID'];
-$currentUsername = $_SESSION['Username'];
-$currentFullName = $_SESSION['FullName'];
-$currentAvatar = $_SESSION['ProfilePictureUrl'];
+// 2. CHẶN LỖI: Nếu chưa đăng nhập, bắt buộc đá về trang login ngay lập tức
+if (!isset($_SESSION['user_id'])) {
+    header("Location: " . BASE_URL . "Views/auth/login.php");
+    exit();
+}
+
+// 3. Đọc dữ liệu an toàn từ Session sau khi đã chắc chắn user đã đăng nhập
+$currentUserId   = $_SESSION['user_id'];
+$currentUsername = $_SESSION['username'];
+$currentFullName = $_SESSION['user_name'];
+$currentAvatar   = $_SESSION['ProfilePictureUrl'] ?? ''; 
+
+require_once __DIR__ . '/../Controllers/PostController.php';
+require_once __DIR__ . '/../Controllers/FollowController.php';
 
 $postController = new PostController();
 $posts = $postController->index();
