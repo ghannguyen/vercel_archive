@@ -231,19 +231,7 @@ if (!function_exists('profileImagePath')) {
                                 >
                             <?php endif; ?>
 
-                            <div class="post-actions d-flex gap-4 mt-2">
-                                <button>
-                                    <i class="bi bi-heart"></i> <?php echo $post['likes']; ?>
-                                </button>
-
-                                <button>
-                                    <i class="bi bi-chat"></i> <?php echo $post['comments']; ?>
-                                </button>
-
-                                <button>
-                                    <i class="bi bi-arrow-repeat"></i> <?php echo $post['shares']; ?>
-                                </button>
-                            </div>
+                        
                         </div>
                     </div>
                 </div>
