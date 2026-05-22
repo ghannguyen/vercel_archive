@@ -16,4 +16,5 @@ if (is_file($file) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
 }
 
 require __DIR__ . '/../Public/index.php';
+exit;
 

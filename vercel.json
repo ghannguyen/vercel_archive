@@ -5,10 +5,8 @@
     }
   },
   "rewrites": [
-    { "source": "/Public/assets/:path*",  "destination": "/Public/assets/:path*" },
-    { "source": "/Public/uploads/:path*", "destination": "/Public/uploads/:path*" },
     { "source": "/assets/:path*",  "destination": "/Public/assets/:path*" },
     { "source": "/uploads/:path*", "destination": "/Public/uploads/:path*" },
-    { "source": "/:path*",         "destination": "/api/index.php" }
+    { "source": "/(.*)", "destination": "/api/index.php" }
   ]
 }
