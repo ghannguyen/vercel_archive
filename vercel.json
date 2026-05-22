@@ -5,7 +5,7 @@
     }
   },
   "routes": [
-    { "src": "/Public/(.*)", "dest": "/Public/$1" },
+    { "src": "/Public/assets/(.*)", "dest": "/Public/assets/$1" },
     { "src": "/assets/(.*)", "dest": "/Public/assets/$1" },
     { "src": "/uploads/(.*)", "dest": "/Public/uploads/$1" },
     { "src": "/(.*)", "dest": "/api/router.php" }
