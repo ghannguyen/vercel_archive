@@ -5,7 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // 1. Định nghĩa hằng số đường dẫn gốc hệ thống nếu chưa có
 if (!defined('BASE_URL')) {
-    define("BASE_URL", "http://localhost:3000/");
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define("BASE_URL", $protocol . "://" . $host . "/");
 }
 
 // 2. CHẶN LỖI: Nếu chưa đăng nhập, bắt buộc đá về trang login ngay lập tức

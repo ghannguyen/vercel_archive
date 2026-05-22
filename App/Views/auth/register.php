@@ -1,6 +1,8 @@
 <?php
 if (!defined('BASE_URL')) {
-    define("BASE_URL", "http://localhost:3000/");
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define("BASE_URL", $protocol . "://" . $host . "/");
 }
 // Định nghĩa lớp điều khiển AdminController để quản lý phân hệ quản trị
 class AuthController {

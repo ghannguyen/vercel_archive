@@ -12,7 +12,9 @@ use App\Controllers\PostController;
 
 // 3. Khai báo BASE_URL nếu chưa định nghĩa
 if (!defined('BASE_URL')) {
-    define("BASE_URL", "http://localhost:3000/");
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define("BASE_URL", $protocol . "://" . $host . "/");
 }
 
 // Chỉnh lại link dẫn vào Views vì nó đã chui vào trong App/Views/

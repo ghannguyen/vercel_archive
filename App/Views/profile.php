@@ -5,7 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // 1. Định nghĩa hằng số đường dẫn gốc hệ thống nếu chưa có để dứt điểm lỗi Fatal Error
 if (!defined('BASE_URL')) {
-    define("BASE_URL", "http://localhost:3000/");
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define("BASE_URL", $protocol . "://" . $host . "/");
 }
 
 // 2. NHẬN DỮ LIỆU ĐỘNG TỪ CONTROLLER TRUYỀN QUA (NẾU CÓ), NẾU CHƯA CÓ LẤY DỮ LIỆU CŨ LÀM MẶC ĐỊNH
