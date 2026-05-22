@@ -37,8 +37,13 @@ class Database {
 
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
-        }
+    die(
+        "Database connection failed: " . $e->getMessage() .
+        "<br>DB_HOST=" . htmlspecialchars($this->host ?? 'NULL') .
+        "<br>DB_PORT=" . htmlspecialchars($this->port ?? 'NULL') .
+        "<br>DB_NAME=" . htmlspecialchars($this->db_name ?? 'NULL')
+    );
+}
 
         return $this->conn;
     }
