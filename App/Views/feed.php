@@ -3,6 +3,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Load helpers
+require_once __DIR__ . '/../../Config/helpers.php';
+
 // 1. Định nghĩa hằng số đường dẫn gốc hệ thống nếu chưa có
 if (!defined('BASE_URL')) {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
@@ -12,7 +15,7 @@ if (!defined('BASE_URL')) {
 
 // 2. CHẶN LỖI: Nếu chưa đăng nhập, bắt buộc đá về trang login ngay lập tức
 if (!isset($_SESSION['user_id'])) {
-    header("Location: " . BASE_URL . "App/Views/auth/login.php");
+    header("Location: " . url('login'));
     exit();
 }
 
@@ -25,7 +28,6 @@ $currentAvatar   = $_SESSION['ProfilePictureUrl'] ?? '';
 require_once __DIR__ . '/../Controllers/PostController.php';
 require_once __DIR__ . '/../Controllers/FollowController.php';
 
-// KHAI BÁO SỬ DỤNG NAMESPACE ĐỂ KHÔNG BỊ VS CODE CHỬI VÀNG KHÈ KHỞI TẠO CONTROLLER
 use App\Controllers\PostController;
 use App\Controllers\FollowController;
 
@@ -35,18 +37,8 @@ $posts = $postController->index();
 $followController = new FollowController();
 $suggestedUsers = $followController->getSuggestedUsers($currentUserId);
 
-// FIX PATH AVATAR: Sửa lại hàm xử lý đường dẫn ảnh tuyệt đối dựa trên hằng số BASE_URL
 function imagePath($path) {
-    if (empty($path)) {
-        return BASE_URL . "Public/assets/img/default-avatar.jpg";
-    }
-
-    if (str_starts_with($path, "http://") || str_starts_with($path, "https://")) {
-        return $path;
-    }
-
-    $cleanPath = str_replace("Public/", "", $path);
-    return BASE_URL . "Public/" . ltrim($cleanPath, "/");
+    return imageUrl($path);
 }
 
 function timeAgo($datetime) {
@@ -71,7 +63,7 @@ function timeAgo($datetime) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/style.css">
+    <link rel="stylesheet" href="<?= assetUrl('CSS/style.css') ?>">
 </head>
 
 <body>
@@ -93,7 +85,7 @@ function timeAgo($datetime) {
                 <div class="header-actions">
                     <a href="#" class="header-search-btn"><i class="bi bi-search"></i></a>
                     <a href="#" class="header-star-btn"><i class="bi bi-star"></i></a>
-                    <a href="<?php echo BASE_URL; ?>App/Views/profile.php" class="header-login-btn">
+                    <a href="<?= url('profile') ?>" class="header-login-btn">
                         <i class="bi bi-person-circle"></i>
                         <span>Hồ sơ</span>
                     </a>
@@ -113,7 +105,7 @@ function timeAgo($datetime) {
             <div class="sidebar-logo"> <i class="bi bi-circle-square"></i> </div>
 
             <a 
-                href="<?php echo BASE_URL; ?>App/Views/feed.php"
+                href="<?= url('feed') ?>"
                 class="sidebar-icon active"
                 id="nav-home"
                 title="Trang chủ"
@@ -147,7 +139,7 @@ function timeAgo($datetime) {
             </a>
 
             <a 
-                href="<?php echo BASE_URL; ?>App/Views/profile.php"
+                href="<?= url('profile') ?>"
                 class="sidebar-icon"
                 id="nav-profile"
                 title="Hồ sơ"

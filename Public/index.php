@@ -4,28 +4,23 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 2. Nhúng file PostController nằm TRONG folder App (Thêm /../App/ vào đường dẫn)
+// 2. Load helpers for URLs
+require_once __DIR__ . '/../Config/helpers.php';
+
+// 3. Nhúng file PostController nằm TRONG folder App
 require_once __DIR__ . '/../App/Controllers/PostController.php';
 
-// ✨ KHAI BÁO SỬ DỤNG CLASS CÓ NAMESPACE ĐỂ XÓA VỆT VÀNG CỦA VS CODE
 use App\Controllers\PostController;
 
-// 3. Khai báo BASE_URL nếu chưa định nghĩa
-if (!defined('BASE_URL')) {
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    define("BASE_URL", $protocol . "://" . $host . "/");
-}
+// 4. Khai báo URL routes
+$loginUrl    = url('login');
+$registerUrl = url('register');
+$homeUrl     = url('');
 
-// Chỉnh lại link dẫn vào Views vì nó đã chui vào trong App/Views/
-$loginUrl    = BASE_URL . "App/Views/auth/login.php";
-$registerUrl = BASE_URL . "App/Views/auth/register.php";
-$homeUrl     = BASE_URL . "Public/index.php";
-
-// 4. Khởi tạo đối tượng Controller
+// 5. Khởi tạo đối tượng Controller
 $postController = new PostController();
 
-// 5. Chạy hàm lấy dữ liệu để đổ ra giao diện Archive
+// 6. Chạy hàm lấy dữ liệu để đổ ra giao diện Archive
 $result = $postController->index();
 
 if (isset($result['posts'])) {
@@ -40,15 +35,9 @@ if (isset($result['posts'])) {
     $totalComments = array_sum(array_column($posts, 'CommentCount'));
 }
 
-// 6. CÁC HÀM HELPER ĐỊNH DẠNG GIAO DIỆN (Giữ nguyên bên dưới...)
+// 7. CÁC HÀM HELPER ĐỊNH DẠNG GIAO DIỆN (Giữ nguyên bên dưới...)
 function imagePath($path) {
-    if (empty($path)) {
-        return "assets/img/default-avatar.jpg";
-    }
-    if (str_starts_with($path, "http://") || str_starts_with($path, "https://")) {
-        return $path;
-    }
-    return str_replace("Public/", "", $path);
+    return imageUrl($path);
 }
 
 function timeAgo($datetime) {
@@ -97,7 +86,7 @@ function formatNumber($number) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/Public/assets/CSS/style.css">
+    <link rel="stylesheet" href="<?= assetUrl('CSS/style.css') ?>">
 </head>
 
 <body>

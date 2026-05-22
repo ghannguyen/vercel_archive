@@ -1,4 +1,7 @@
 <?php
+// Load helpers
+require_once __DIR__ . '/../../../Config/helpers.php';
+
 if (!defined('BASE_URL')) {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -15,7 +18,7 @@ if (session_status() == PHP_SESSION_NONE) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đặt lại mật khẩu | Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>Public/assets/CSS/login-style.css">
+    <link rel="stylesheet" href="<?= assetUrl('CSS/login-style.css') ?>">
 </head>
 <body>
 
@@ -35,7 +38,7 @@ if (session_status() == PHP_SESSION_NONE) {
             </div>
         <?php endif; ?>
 
-        <form action="<?php echo BASE_URL; ?>App/Views/auth/process-forgot.php" method="POST">
+        <form action="<?= url('forgot-password') ?>" method="POST">
             <div class="form-group">
                 <label for="email"><i class=\"fa-regular fa-envelope\"></i> Email đã đăng ký</label>
                 <input type="email" id="email" name="email" placeholder="Nhập địa chỉ email của bạn" required>
@@ -55,7 +58,7 @@ if (session_status() == PHP_SESSION_NONE) {
         </form>
 
         <div class="extra-links" style="justify-content: center; gap: 15px;">
-            <a href="<?php echo BASE_URL; ?>App/Views/auth/login.php">Quay lại Đăng nhập</a>
+            <a href="<?= url('login') ?>">Quay lại Đăng nhập</a>
             <span style="color: #ccc;">|</span>
             <a href="<?php echo BASE_URL; ?>App/Views/auth/register.php">Đăng ký tài khoản</a>
         </div>
