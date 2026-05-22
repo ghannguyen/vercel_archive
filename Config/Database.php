@@ -13,13 +13,17 @@ class Database {
     private $port;
     public $conn;
 
-    public function __construct() {
-        $this->host = getenv('DB_HOST') ?: "100.76.147.122";
-        $this->db_name = getenv('DB_NAME') ?: "db_archive";
-        $this->username = getenv('DB_USER') ?: "root";
-        $this->password = getenv('DB_PASS') ?: "";
-        $this->port = getenv('DB_PORT') ?: "3306";
+   public function __construct() {
+    $this->host = getenv('DB_HOST');
+    $this->db_name = getenv('DB_NAME');
+    $this->username = getenv('DB_USER');
+    $this->password = getenv('DB_PASS');
+    $this->port = getenv('DB_PORT') ?: "3306";
+
+    if (!$this->host || !$this->db_name || !$this->username || !$this->password) {
+        die("Missing database environment variables");
     }
+}
 
     public function connect() {
         $this->conn = null;
